@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" font-family="Segoe UI, Arial, sans-serif" role="img" aria-label="Schéma de l'architecture en couches de l'API">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#27483b" />
+    </marker>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#183a2a" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="760" height="560" rx="22" fill="#fffaf2" />
+  <text x="380" y="46" text-anchor="middle" font-size="24" font-weight="700" fill="#183a2a">Architecture en couches de l'API</text>
+
+  <!-- Client -->
+  <g filter="url(#soft)">
+    <rect x="280" y="74" width="200" height="58" rx="12" fill="#183a2a" />
+  </g>
+  <text x="380" y="104" text-anchor="middle" font-size="18" font-weight="700" fill="#fffaf2">Client</text>
+  <text x="380" y="123" text-anchor="middle" font-size="12.5" fill="#cfe0d6">requête HTTP</text>
+
+  <line x1="380" y1="132" x2="380" y2="166" stroke="#27483b" stroke-width="2.5" marker-end="url(#arrow)" />
+
+  <!-- Routes -->
+  <g filter="url(#soft)">
+    <rect x="220" y="168" width="320" height="62" rx="14" fill="rgba(46,184,97,0.14)" stroke="#1c5c36" stroke-width="1.6" />
+  </g>
+  <text x="380" y="195" text-anchor="middle" font-size="18" font-weight="700" fill="#1c5c36">Routes</text>
+  <text x="380" y="216" text-anchor="middle" font-size="12.5" fill="#27483b">définissent les routes HTTP par table</text>
+
+  <line x1="380" y1="230" x2="380" y2="262" stroke="#27483b" stroke-width="2.5" marker-end="url(#arrow)" />
+
+  <!-- Controllers -->
+  <g filter="url(#soft)">
+    <rect x="220" y="264" width="320" height="62" rx="14" fill="rgba(225,43,53,0.13)" stroke="#7d171b" stroke-width="1.6" />
+  </g>
+  <text x="380" y="291" text-anchor="middle" font-size="18" font-weight="700" fill="#7d171b">Controllers</text>
+  <text x="380" y="312" text-anchor="middle" font-size="12.5" fill="#27483b">orchestration HTTP + gestion d'erreur</text>
+
+  <line x1="380" y1="326" x2="380" y2="358" stroke="#27483b" stroke-width="2.5" marker-end="url(#arrow)" />
+
+  <!-- Services -->
+  <g filter="url(#soft)">
+    <rect x="220" y="360" width="320" height="62" rx="14" fill="rgba(245,159,11,0.18)" stroke="#8a4a09" stroke-width="1.6" />
+  </g>
+  <text x="380" y="387" text-anchor="middle" font-size="18" font-weight="700" fill="#8a4a09">Services</text>
+  <text x="380" y="408" text-anchor="middle" font-size="12.5" fill="#27483b">logique métier — un fichier par table</text>
+
+  <line x1="380" y1="422" x2="380" y2="454" stroke="#27483b" stroke-width="2.5" marker-end="url(#arrow)" />
+
+  <!-- Models -->
+  <g filter="url(#soft)">
+    <rect x="220" y="456" width="320" height="62" rx="14" fill="rgba(40,166,237,0.15)" stroke="#0f4e73" stroke-width="1.6" />
+  </g>
+  <text x="380" y="483" text-anchor="middle" font-size="18" font-weight="700" fill="#0f4e73">Models</text>
+  <text x="380" y="504" text-anchor="middle" font-size="12.5" fill="#27483b">TableBuilder — requêtes SQL paramétrées</text>
+
+  <!-- DB -->
+  <g filter="url(#soft)">
+    <rect x="592" y="456" width="148" height="62" rx="14" fill="#183a2a" />
+  </g>
+  <text x="666" y="483" text-anchor="middle" font-size="16" font-weight="700" fill="#fffaf2">PostgreSQL</text>
+  <text x="666" y="503" text-anchor="middle" font-size="12" fill="#cfe0d6">base de données</text>
+  <line x1="540" y1="487" x2="588" y2="487" stroke="#27483b" stroke-width="2.5" marker-end="url(#arrow)" />
+</svg>

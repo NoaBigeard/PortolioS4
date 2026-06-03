@@ -1,0 +1,32 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #f5efe2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: #183a2a;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(24, 58, 42, 0.08),
+      transparent 28%
+    ),
+    linear-gradient(180deg, #f7f3ea 0%, #f3ead9 100%);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
