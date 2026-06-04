@@ -131,7 +131,7 @@ const sections = [
   },
   {
     id: "bilan",
-    label: "BILAN",
+    label: "Bilan",
     title: "Bilan d'intégration",
     intro:
       "L'intégration chez APPUP s'est faite progressivement, en mêlant prise en main technique, observation des pratiques internes et construction d'une relation de travail saine avec le maître de stage.",

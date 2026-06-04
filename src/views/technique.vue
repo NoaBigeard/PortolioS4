@@ -71,15 +71,54 @@
       </div>
     </div>
 
-    <div v-else class="titleCard contentCard">
-      <p class="textCard">{{ currentSection.intro }}</p>
+    <div v-else class="bilan">
+      <div class="titleCard contentCard">
+        <p class="textCard">{{ currentSection.intro }}</p>
+        <p class="bilan-legend">
+          <span class="bilan-legend__label">Échelle :</span>
+          <span class="level level-maitrise">maîtrisé</span>
+          <span class="level level-acquis">acquis</span>
+          <span class="level level-consolider">à consolider</span>
+        </p>
+      </div>
 
-      <p
-        v-for="paragraph in currentSection.paragraphs"
-        :key="paragraph"
-        class="textCard">
-        {{ paragraph }}
-      </p>
+      <article
+        v-for="trace in evaluatedTraces"
+        :key="trace.id"
+        class="titleCard eval-card">
+        <header class="eval-head">
+          <h3 class="eval-head__title">{{ trace.title }}</h3>
+          <div class="eval-head__rating">
+            <span class="eval-meter" aria-hidden="true">
+              <span
+                v-for="step in 3"
+                :key="step"
+                class="eval-meter__seg"
+                :class="[
+                  `eval-meter__seg--${traceEval(trace).level}`,
+                  {
+                    'eval-meter__seg--on':
+                      step <= levelScore[traceEval(trace).level],
+                  },
+                ]"></span>
+            </span>
+            <span class="level" :class="`level-${traceEval(trace).level}`">{{
+              levels[traceEval(trace).level]
+            }}</span>
+          </div>
+        </header>
+
+        <p
+          class="textCard"
+          v-html="highlightSkills(syntheses[trace.id], trace)"></p>
+
+        <div
+          class="eval-verdict"
+          :class="`eval-verdict--${traceEval(trace).level}`">
+          <p class="eval-verdict__label">Mon évaluation</p>
+          <p class="eval-verdict__text" v-html="traceEval(trace).text"></p>
+        </div>
+      </article>
 
       <p class="textCard muted">{{ currentSection.footer }}</p>
     </div>
@@ -89,7 +128,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import trace1Image from "../assets/architecture-api.svg";
-import traceBorne from "../assets/hero.png";
+import traceDeploiement from "../assets/hero.png";
 import traceStripe from "../assets/stripe-webhooks.png";
 
 const sections = [
@@ -186,54 +225,112 @@ const sections = [
   },
   {
     id: "trace3",
-    label: "Borne",
-    title: "Borne d'achat de billets en libre-service",
+    label: "Multi-support",
+    title: "Afficheur multi-support (Raspberry, borne, Windows)",
     skills: [
       {
-        label: "adapter une interface pour un usage borne/tactile",
-        color: "red",
-        keywords: ["adapter une interface pour un usage borne/tactile"],
+        label: "déployer une même application sur plusieurs supports",
+        color: "indigo",
+        keywords: ["déployer une même application sur plusieurs supports"],
       },
       {
-        label: "concevoir un parcours utilisateur rapide",
-        color: "green",
-        keywords: ["concevoir un parcours utilisateur rapide"],
+        label: "configurer un poste en mode kiosque",
+        color: "cyan",
+        keywords: ["configurer un poste en mode kiosque"],
       },
       {
-        label: "sécuriser un point de vente public",
-        color: "orange",
-        keywords: ["sécuriser un point de vente public"],
+        label: "piloter l'affichage via une configuration JSON distante",
+        color: "lime",
+        keywords: ["piloter l'affichage via une configuration JSON distante"],
+      },
+      {
+        label: "automatiser le lancement au démarrage",
+        color: "amber",
+        keywords: ["automatiser le lancement au démarrage"],
       },
     ],
-    image: traceBorne,
-    imageAlt: "Capture de la borne avec le QR code affiché",
-    caption: "Trace 3 : borne événementielle avec QR code de paiement",
+    image: traceDeploiement,
+    imageAlt: "Capture du fichier JSON de configuration qui pilote l'afficheur",
+    caption: "Trace 3 : fichier JSON de configuration qui pilote le contenu de l'afficheur",
     intro:
-      "La trace n°3 présente une borne en libre-service installée lors d'un événement, qui permet aux visiteurs d'acheter leurs billets rapidement en scannant un QR code.",
+      "La trace n°3 présente un lecteur d'affichage dynamique que j'ai conçu pour diffuser un contenu en plein écran — une vidéo, un site web ou une image — sur différents postes, et dont le comportement est piloté à distance depuis un simple fichier de configuration.",
     paragraphs: [
-      "L'objectif était de concevoir un parcours utilisateur rapide pour réduire le temps d'attente : au lieu de passer par une caisse, le visiteur scanne le QR code affiché sur la borne et arrive directement sur la page de paiement préremplie avec son billet.",
-      "L'enjeu suivant était de sécuriser un point de vente public laissé sans surveillance : le QR code est généré côté backend et pointe vers une URL signée contenant les informations du billet (type, prix, événement), de sorte que ces données ne puissent pas être modifié côté client.",
-      "Enfin, il a fallu adapter une interface pour un usage borne/tactile : un affichage plein écran, des éléments de grande taille, un fond contrasté et aucune action superflue, afin que le parcours reste centré sur le QR code et utilisable sans clavier ni souris.",
+      "Le cœur du système est un JSON récupéré au démarrage depuis un sous-domaine d'appup, le serveur de l'entreprise. Ce fichier décrit ce qui doit s'afficher : le type de média (vidéo, site ou image), l'URL ou le fichier à charger, ainsi que l'orientation portrait ou paysage. Il permet de piloter l'affichage via une configuration JSON distante : modifier ce fichier suffit à changer le contenu d'un écran, sans se déplacer ni toucher au code embarqué sur la machine.",
+      "Pour que le poste reste autonome, il a fallu automatiser le lancement au démarrage : un script se déclenche au boot, va chercher la configuration à jour, prépare le média puis ouvre l'affichage en plein écran, sans aucune intervention humaine.",
+      "Le même script devait pouvoir tourner sur plusieurs environnements ; j'ai donc cherché à déployer une même application sur plusieurs supports — un Raspberry Pi sous Linux, une borne tactile et un PC Windows — en n'adaptant que la couche de lancement propre à chaque système.",
+      "Enfin, dans tous les cas il fallait configurer un poste en mode kiosque : un affichage plein écran sans barre de navigation ni curseur, un contenu verrouillé et une relance automatique en cas de coupure, pour qu'un écran laissé sans surveillance affiche toujours le bon contenu.",
     ],
     footer:
-      "Cette trace illustre la conception d'une interface dédiée à un cas d'usage précis et la sécurisation d'un parcours d'achat sans interaction directe avec le serveur.",
+      "Cette trace illustre la conception d'un afficheur autonome, configurable à distance et déployable sur des supports hétérogènes à partir d'une base de code commune.",
   },
   {
     id: "bilan",
-    label: "BILAN",
+    label: "Bilan / Évaluation",
     title: "Bilan",
     intro:
-      "Le bilan rassemble les acquis techniques du stage et la manière dont les choix d'architecture ont influencé la suite du projet.",
+      "Le bilan rassemble les acquis techniques du stage à travers les trois traces : une API REST générique, l'intégration de services tiers et un afficheur multi-support piloté à distance. Au-delà des technologies, le fil conducteur a été de concevoir des solutions réutilisables plutôt que des réponses au cas par cas.",
     paragraphs: [
       "La mise en place d'une API générique m'a obligé à anticiper les besoins futurs (nouvelles tables, nouvelles routes) plutôt que de coder au cas par cas. Cette approche m'a fait gagner du temps dès que de nouvelles fonctionnalités ont été demandées.",
       "L'intégration des services tiers (Stripe, Brevo, AWS) m'a appris à lire une documentation technique en autonomie, à isoler les configurations sensibles et à gérer les cas d'erreur d'un service que je ne maîtrise pas.",
-      "La borne événementielle a été l'occasion de réfléchir à l'expérience utilisateur dans un contexte différent du web classique : pas de clavier, pas de souris, un temps d'interaction très court.",
-      "Si je devais recommencer, je mettrais en place les webhooks Stripe dès le départ plutôt que d'attendre, et j'écrirais des tests automatisés pour les services générés.",
+      "L'afficheur multi-support m'a fait sortir du navigateur classique : il a fallu penser déploiement sur des environnements hétérogènes (Raspberry Pi, borne, PC Windows), configuration à distance via un simple JSON et exécution autonome au démarrage, sur des machines qui tournent sans personne devant l'écran.",
+      "Ces trois traces partagent une même logique : externaliser ce qui change souvent (le schéma de base pour l'API, les clés pour les services tiers, le contenu et l'orientation pour l'afficheur) afin de modifier le comportement sans retoucher au code. C'est la principale compétence que je retiens du stage.",
+      "Avec du recul, je m'y prendrais autrement sur deux points : mettre en place les webhooks Stripe dès le départ plutôt que d'attendre, et écrire des tests automatisés — pour les services générés de l'API comme pour la lecture de la configuration de l'afficheur — afin de fiabiliser ces briques réutilisées partout.",
     ],
     footer:
-      "Le bilan final permet d'avoir une vision claire des compétences mobilisées et de celles à approfondir.",
+      "Ce bilan donne une vision claire des compétences mobilisées — architecture, intégration et déploiement — et de celles à approfondir, notamment les tests automatisés.",
   },
 ];
+
+// Échelle d'auto-évaluation utilisée dans l'onglet BILAN.
+const levels = {
+  maitrise: "maîtrisé",
+  acquis: "acquis",
+  consolider: "à consolider",
+};
+
+// Synthèse de chaque trace pour le bilan. Les phrases des savoir-faire y sont
+// reprises mot pour mot pour être surlignées dans leur couleur (highlightSkills).
+const syntheses = {
+  trace1:
+    "Cette première trace portait sur le socle de l'API. Il a d'abord fallu concevoir une architecture en couches (Routes, Controllers, Services, Models) pour garder le projet maintenable, puis créer des routes HTTP propres à chaque table. Côté base de données, j'ai appris à construire des requêtes SQL de façon dynamique avec une classe réutilisable, et surtout à sécuriser les endpoints sur trois niveaux successifs (clé d'API, Basic Auth, requêtes paramétrées).",
+  trace2:
+    "Cette trace portait sur l'ouverture du projet vers l'extérieur. Pour brancher Stripe, Brevo et AWS S3, j'ai dû lire et comprendre une documentation technique dense, puis intégrer une API tierce dans un projet existant sans casser le reste. J'ai pris l'habitude de sécuriser des clés d'API via variables d'environnement, et l'enjeu le plus formateur a été de gérer les flux asynchrones (redirections, webhooks) déclenchés par Stripe après le paiement.",
+  trace3:
+    "Cette trace portait sur la diffusion d'un contenu en dehors du navigateur classique. L'objectif était de déployer une même application sur plusieurs supports (Raspberry Pi, borne, PC Windows) à partir d'une base commune. Sur chaque poste, il a fallu configurer un poste en mode kiosque puis automatiser le lancement au démarrage, tandis que le contenu reste externalisé : je peux piloter l'affichage via une configuration JSON distante récupérée depuis appup.",
+};
+
+// Nombre de segments allumés dans la jauge de niveau.
+const levelScore = {
+  consolider: 1,
+  acquis: 2,
+  maitrise: 3,
+};
+
+// Auto-évaluation par savoir-faire (une trace = un savoir-faire), indexée
+// par l'identifiant de la trace.
+const traceEvaluations = {
+  trace1: {
+    level: "maitrise",
+    text: "C'est <strong>le savoir-faire que je maîtrise le mieux</strong> : l'architecture en couches et l'API générique <strong>tournent en production</strong> et m'ont fait gagner beaucoup de temps. Je suis à l'aise avec le routage dynamique et les requêtes paramétrées. Il me reste à approfondir <strong>l'optimisation des requêtes complexes</strong> (jointures, gros volumes) et à ajouter des <strong>tests automatisés</strong>.",
+  },
+  trace2: {
+    level: "acquis",
+    text: "Je sais <strong>intégrer un service tiers de bout en bout</strong> en m'appuyant sur sa documentation, et j'ai <strong>reproduit la démarche sur trois services</strong> (Stripe, Brevo, AWS S3). Le point qui me demande encore de la rigueur, ce sont les <strong>flux asynchrones</strong> : les webhooks Stripe fonctionnent, mais leur <strong>fiabilité</strong> (idempotence, rejeu) reste à consolider.",
+  },
+  trace3: {
+    level: "consolider",
+    text: "C'est le <strong>savoir-faire le plus récent</strong>. Le <strong>pilotage du contenu par JSON distant</strong> est la partie la plus aboutie, mais le <strong>déploiement sur les trois supports</strong> demande encore des réglages manuels et la <strong>robustesse longue durée</strong> (reprise après coupure, configuration indisponible au démarrage) reste à fiabiliser.",
+  },
+};
+
+// Les traces évaluées dans le bilan (toutes sauf le bilan lui-même).
+const evaluatedTraces = sections.filter(
+  (section) => section.id !== "bilan" && section.skills?.length,
+);
+
+// Renvoie l'auto-évaluation d'une trace (fallback neutre si absente).
+const traceEval = (trace) =>
+  traceEvaluations[trace.id] ?? { level: "acquis", text: "" };
 
 const activeSection = ref("trace1");
 
@@ -509,6 +606,26 @@ h2 {
   background: rgba(146, 99, 55, 0.18);
 }
 
+.pill-indigo {
+  color: #3730a3;
+  background: rgba(99, 102, 241, 0.18);
+}
+
+.pill-cyan {
+  color: #155e75;
+  background: rgba(6, 182, 212, 0.18);
+}
+
+.pill-lime {
+  color: #3f6212;
+  background: rgba(132, 204, 22, 0.22);
+}
+
+.pill-amber {
+  color: #854d0e;
+  background: rgba(234, 179, 8, 0.22);
+}
+
 :deep(.hl) {
   padding: 0.02rem 0.28rem;
   border-radius: 0.35rem;
@@ -555,6 +672,26 @@ h2 {
   background: rgba(146, 99, 55, 0.18);
 }
 
+:deep(.hl-indigo) {
+  color: #3730a3;
+  background: rgba(99, 102, 241, 0.2);
+}
+
+:deep(.hl-cyan) {
+  color: #155e75;
+  background: rgba(6, 182, 212, 0.2);
+}
+
+:deep(.hl-lime) {
+  color: #3f6212;
+  background: rgba(132, 204, 22, 0.24);
+}
+
+:deep(.hl-amber) {
+  color: #854d0e;
+  background: rgba(234, 179, 8, 0.24);
+}
+
 .textCard {
   margin: 1.1rem 0 0;
   font-size: 1.05rem;
@@ -578,6 +715,138 @@ h2 {
 
 .textCard.muted {
   color: rgba(39, 72, 59, 0.78);
+}
+
+/* ---- Onglet BILAN : cartes d'évaluation par savoir-faire ---- */
+.bilan {
+  display: grid;
+  gap: 1rem;
+}
+
+.bilan-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+}
+
+.bilan-legend__label {
+  font-weight: 700;
+  color: #27483b;
+}
+
+.eval-card {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.eval-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.eval-head__title {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: #183a2a;
+}
+
+.eval-head__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.eval-meter {
+  display: inline-flex;
+  gap: 0.2rem;
+}
+
+.eval-meter__seg {
+  width: 1.6rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(24, 58, 42, 0.12);
+}
+
+.eval-meter__seg--on.eval-meter__seg--maitrise {
+  background: #2eb861;
+}
+
+.eval-meter__seg--on.eval-meter__seg--acquis {
+  background: #28a6ed;
+}
+
+.eval-meter__seg--on.eval-meter__seg--consolider {
+  background: #f59f0b;
+}
+
+.eval-verdict {
+  margin-top: 0.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.9rem;
+  background: rgba(24, 58, 42, 0.04);
+  border-left: 4px solid rgba(24, 58, 42, 0.25);
+}
+
+.eval-verdict--maitrise {
+  border-left-color: #2eb861;
+}
+
+.eval-verdict--acquis {
+  border-left-color: #28a6ed;
+}
+
+.eval-verdict--consolider {
+  border-left-color: #f59f0b;
+}
+
+.eval-verdict__label {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #183a2a;
+}
+
+.eval-verdict__text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #27483b;
+}
+
+.level {
+  display: inline-block;
+  padding: 0.12rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.level-maitrise {
+  color: #1c5c36;
+  background: rgba(46, 184, 97, 0.16);
+  border-color: rgba(46, 184, 97, 0.4);
+}
+
+.level-acquis {
+  color: #0f4e73;
+  background: rgba(40, 166, 237, 0.16);
+  border-color: rgba(40, 166, 237, 0.4);
+}
+
+.level-consolider {
+  color: #8a4a09;
+  background: rgba(245, 159, 11, 0.2);
+  border-color: rgba(245, 159, 11, 0.45);
 }
 
 .internal-nav {

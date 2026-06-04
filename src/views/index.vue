@@ -73,9 +73,10 @@
           tarif réduit pour les membres premium.
         </li>
         <li>
-          Configuration d'une <strong>borne en mode kiosque</strong> pour un
-          évènement, avec QR code de paiement Stripe préformaté pour réduire le
-          temps d'attente des visiteurs.
+          Conception d'un <strong>lecteur d'affichage dynamique</strong> piloté
+          par un fichier JSON distant (vidéo, site ou image, orientation
+          configurable), déployable en mode kiosque sur Raspberry Pi, borne
+          tactile et PC Windows.
         </li>
         <li>
           Organisation autonome du travail (planification, jalons

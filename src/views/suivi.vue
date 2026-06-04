@@ -97,8 +97,8 @@ const sections = [
       "La première phase du stage a consisté à transformer la demande initiale (« une API de connexion + un site e-commerce ») en un cahier des charges exploitable, avec des fonctionnalités classées par priorité et un découpage en lots.",
     paragraphs: [
       "J'ai d'abord listé les besoins métier avec Marouane : inscription, connexion, gestion des produits, panier, paiement, factures, abonnement premium, espace admin, gestion des photos. Pour chaque besoin, j'ai noté la table associée (users, articles, carts, cart_items, orders, photos, etc.) et les contraintes (soft delete, niveaux d'accès, vérification mail).",
-      "J'ai ensuite hiérarchisé les fonctionnalités en trois lots : (1) socle technique — API générique, authentification, CRUD ; (2) parcours utilisateur — catalogue, panier, paiement Stripe ; (3) extensions — abonnement premium, Customer Portal, borne événementielle. Cette priorisation a permis d'éviter de m'éparpiller et de livrer le socle avant d'attaquer les bonus.",
-      "Le cahier des charges a évolué pendant le stage : par exemple, l'idée de la borne en mode kiosque pour un évènement est apparue en cours de route et a été ajoutée au lot 3 sans remettre en cause les lots déjà livrés.",
+      "J'ai ensuite hiérarchisé les fonctionnalités en trois lots : (1) socle technique — API générique, authentification, CRUD ; (2) parcours utilisateur — catalogue, panier, paiement Stripe ; (3) extensions — abonnement premium, Customer Portal, lecteur d'affichage dynamique. Cette priorisation a permis d'éviter de m'éparpiller et de livrer le socle avant d'attaquer les bonus.",
+      "Le cahier des charges a évolué pendant le stage : par exemple, l'idée du lecteur d'affichage dynamique déployable sur plusieurs supports (Raspberry, borne en mode kiosque, PC Windows) est apparue en cours de route et a été ajoutée au lot 3 sans remettre en cause les lots déjà livrés.",
     ],
     footer:
       "Cette trace montre qu'un découpage explicite en lots permet de mesurer l'avancement et d'absorber les nouvelles idées sans perdre la cohérence du projet.",
@@ -120,7 +120,7 @@ const sections = [
       "Le stage de 9 semaines (7 avril – 5 juin 2026) a été organisé par jalons hebdomadaires, chaque semaine ciblant une fonctionnalité ou un service tiers à finaliser.",
     paragraphs: [
       "Les premières semaines ont été consacrées au socle : pool PostgreSQL, TableBuilder générique, génération auto des services, middleware d'auth (apiKey + Basic Auth + access_level), inscription / vérification mail / reset password. Le frontend Vue 3 (catalogue, fiche produit, panier) est arrivé en parallèle pour valider l'API par l'usage.",
-      "Les semaines suivantes ont été dédiées à l'intégration des services tiers : Stripe (Checkout, Customer Portal, webhooks, abonnement premium), Brevo (templates en base, mails transactionnels), AWS S3 (multer-s3 + UUID + ACL public-read). Une semaine a aussi été réservée à la borne en mode kiosque pour l'évènement.",
+      "Les semaines suivantes ont été dédiées à l'intégration des services tiers : Stripe (Checkout, Customer Portal, webhooks, abonnement premium), Brevo (templates en base, mails transactionnels), AWS S3 (multer-s3 + UUID + ACL public-read). Une semaine a aussi été réservée au lecteur d'affichage dynamique piloté par JSON, déployé en mode kiosque sur Raspberry, borne et PC Windows.",
       "Le planning a été ajusté plusieurs fois : par exemple, le passage de localStorage à sessionStorage pour les credentials, et le passage de mail+password dans le body à du Basic Auth standard, n'étaient pas prévus initialement mais ont été ajoutés suite à des remarques du maître de stage (cf. fichier « Ce qu'il faut faire.txt » du 4 mai).",
     ],
     footer:
@@ -151,7 +151,7 @@ const sections = [
   },
   {
     id: "bilan",
-    label: "BILAN",
+    label: "Bilan",
     title: "Bilan du suivi de projet",
     intro:
       "Le suivi de projet pendant ce stage m'a appris à transformer un sujet large en une suite de livrables tenables, et à m'auto-piloter sur 9 semaines sans qu'un chef de projet ne séquence les tâches à ma place.",
