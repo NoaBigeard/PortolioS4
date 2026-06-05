@@ -74,12 +74,6 @@
     <div v-else class="bilan">
       <div class="titleCard contentCard">
         <p class="textCard">{{ currentSection.intro }}</p>
-        <p class="bilan-legend">
-          <span class="bilan-legend__label">Échelle :</span>
-          <span class="level level-maitrise">maîtrisé</span>
-          <span class="level level-acquis">acquis</span>
-          <span class="level level-consolider">à consolider</span>
-        </p>
       </div>
 
       <article
@@ -126,10 +120,12 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import trace1Image from "../assets/architecture-api.svg";
 import traceDeploiement from "../assets/hero.png";
 import traceStripe from "../assets/stripe-webhooks.png";
+import traceConfig from "../assets/captureConfig.png";
 
 const sections = [
   {
@@ -162,12 +158,12 @@ const sections = [
     imageAlt: "Schéma de l'architecture en couches de l'API REST",
     caption: "Trace 1 : architecture en couches de l'API",
     intro:
-      "La trace n°1 présente une API REST générique développée en Node.js, Express et PostgreSQL, conçue depuis zéro pour être réutilisable sur les futurs projets clients de l'entreprise.",
+      "La trace n°1 présente une API REST générique développée en **Node.js**, **Express** et **PostgreSQL**, conçue **depuis zéro** pour être réutilisable sur les futurs projets de l'entreprise.",
     paragraphs: [
-      "Pour garder un projet maintenable, j'ai cherché à concevoir une architecture en couches, répartie en quatre responsabilités distinctes : les Routes servent à créer des routes HTTP propres à chaque table, les Controllers orchestrent la requête et la gestion d'erreur, les Services portent la logique métier (un fichier par table) et les Models accèdent à la base de données. Le point d'entrée Server.js lit information_schema pour connaître les tables autorisées, puis génère automatiquement les fichiers de service avant de démarrer le serveur.",
-      "Pour éviter de réécrire les mêmes opérations CRUD sur chaque table, la classe TableBuilder permet de construire des requêtes SQL de façon dynamique : SELECT, INSERT, UPDATE et DELETE, avec gestion du where, du orderBy, de la limit et de l'offset. Chaque INSERT renseigne automatiquement creation_date et change_date, et chaque UPDATE rafraîchit change_date, pour un comportement identique sur toutes les tables.",
-      "Pour sécuriser les endpoints, la sécurité s'appuie sur trois niveaux successifs. Un premier middleware vérifie l'en-tête x-api-key avant d'atteindre la moindre route HTTP. Un second lit le Basic Auth, contrôle le mot de passe avec bcrypt et compare le niveau d'accès de l'utilisateur (0 / 10 / 50 / 100) à celui requis. Enfin, toutes les requêtes passent par des paramètres $1, $2… pour fermer la porte à l'injection SQL.",
-      "Les suppressions sont des soft delete : la ligne est marquée deleted = true plutôt qu'effacée, et une route de restauration permet à l'administrateur de revenir en arrière sans perdre l'historique.",
+      "Pour garder un projet maintenable, j'ai cherché à concevoir une architecture en couches, répartie en quatre responsabilités distinctes : les **Routes** servent à créer des routes HTTP propres à chaque table, les **Controllers** orchestrent la requête et la gestion d'erreur, les **Services** portent la logique métier (un fichier par table) et les **Models** accèdent à la base de données. Le point d'entrée **Server.js** lit **information_schema** pour connaître les tables autorisées, puis génère automatiquement les fichiers de service avant de démarrer le serveur.",
+      "Pour éviter de réécrire les mêmes opérations CRUD sur chaque table, la classe **TableBuilder** permet de construire des requêtes SQL de façon dynamique : SELECT, INSERT, UPDATE et DELETE, avec gestion du where, du orderBy, de la limit et de l'offset. Chaque INSERT renseigne automatiquement creation_date et change_date, et chaque UPDATE rafraîchit change_date, pour un comportement identique sur toutes les tables.",
+      "Pour sécuriser les endpoints, la sécurité s'appuie sur trois niveaux successifs. Un premier contrôle vérifie qu'une **clé d'API** valide accompagne la requête avant même d'atteindre la moindre route : sans cette clé, l'API reste inaccessible. Un second lit le **Basic Auth**, contrôle le mot de passe avec **bcrypt** et compare le niveau d'accès de l'utilisateur à celui requis. Enfin, toutes les requêtes passent par des **paramètres $1, $2…** pour fermer la porte à l'**injection SQL**.",
+      "Les suppressions sont des **soft delete** : la ligne est marquée **deleted = true** plutôt qu'effacée, et une route de restauration permet à l'administrateur de revenir en arrière sans perdre l'historique.",
     ],
     footer:
       "Cette trace justifie les choix d'architecture pour produire une API robuste, générique et sécurisée.",
@@ -201,24 +197,21 @@ const sections = [
     image: traceStripe,
     imageAlt:
       "Capture du tableau de bord des événements Stripe après un paiement à 79,99 €",
-    caption: "Trace 2 : tableau de bord des événements Stripe après un paiement",
+    caption:
+      "Trace 2 : tableau de bord des événements Stripe après un paiement",
     frames: [
       { color: "blue", x: "0.4%", y: "10%", w: "60%", h: "9%" },
       { color: "orange", x: "0.4%", y: "21%", w: "60%", h: "76%" },
       { color: "red", x: "63%", y: "22%", w: "36%", h: "75%" },
     ],
-    highlights: [
-      { text: "encadré bleu", color: "blue" },
-      { text: "encadré orange", color: "orange" },
-      { text: "encadré rouge", color: "red" },
-    ],
+    highlights: [],
     intro:
-      "La trace n°2 ci-dessus est une capture du tableau de bord des événements Stripe, le service tiers que j'ai poussé le plus loin dans le projet e-commerce. L'enjeu était d'intégrer une API tierce dans un projet existant, puis de réagir correctement à tout ce que Stripe renvoie une fois le paiement effectué.",
+      "La trace n°2 ci-dessus est une capture du tableau de bord des événements **Stripe**, le service tiers que j'ai poussé le plus loin dans le projet e-commerce. L'enjeu était d'intégrer une API tierce dans un projet existant, puis de réagir correctement à tout ce que Stripe renvoie une fois le paiement effectué.",
     paragraphs: [
-      "Quand un client règle sa commande, Stripe ne se contente pas d'un simple « payé » : il déclenche tout un enchaînement d'événements. Tout en haut, l'encadré bleu correspond à l'événement que j'ai ouvert, invoice_payment.paid (le paiement de l'abonnement à 79,99 €). En dessous, l'encadré orange regroupe la suite de la chaîne : checkout.session.completed (l'achat est terminé), invoice.payment_succeeded (le paiement a réussi) puis invoice.paid (la facture est réglée).",
-      "L'encadré rouge, à droite, montre les données de cet événement (Event data) : le montant amount_paid: 7999 — soit 79,99 € —, la devise eur et le statut status: \"paid\". C'est sur ces informations que mon serveur s'appuie pour valider la commande. Comme ces événements arrivent en différé, indépendamment de ce que fait l'utilisateur dans son navigateur, il a fallu gérer les flux asynchrones (redirections, webhooks) : Stripe notifie mon serveur dès qu'un événement se produit, plutôt que d'attendre une réponse immédiate.",
-      "Brancher Stripe a demandé de lire et comprendre une documentation technique dense pour repérer les bons événements à écouter, et de sécuriser des clés d'API via variables d'environnement en isolant la clé secrète et le secret du webhook dans un fichier .env plutôt que dans le code.",
-      "Sur le même principe, j'ai intégré deux autres services : Brevo, pour les emails transactionnels (vérification d'inscription, réinitialisation de mot de passe), et AWS S3, pour héberger les photos d'articles.",
+      "Quand un client règle sa commande, Stripe ne se contente pas d'un simple « payé » : il déclenche tout un **enchaînement d'événements**. Tout en haut, l'encadré bleu correspond à l'événement que j'ai ouvert, invoice_payment.paid (le paiement de l'abonnement à 79,99 €). En dessous, l'encadré orange regroupe la suite de la chaîne : checkout.session.completed (l'achat est terminé), invoice.payment_succeeded (le paiement a réussi) puis invoice.paid (la facture est réglée).",
+      "L'encadré rouge, à droite, montre les données de cet événement (Event data) : le montant amount_paid: 7999 — soit 79,99 € —, la devise eur et le statut status: \"paid\". C'est sur ces informations que mon serveur s'appuie pour valider la commande. Comme ces événements arrivent **en différé**, indépendamment de ce que fait l'utilisateur dans son navigateur, il a fallu gérer les flux asynchrones (redirections, webhooks) : Stripe notifie mon serveur dès qu'un événement se produit, plutôt que d'attendre une réponse immédiate.",
+      "Brancher Stripe a demandé de lire et comprendre une documentation technique dense pour repérer les bons événements à écouter, et de sécuriser des clés d'API via variables d'environnement en isolant la clé secrète et le secret du webhook dans un fichier **.env** plutôt que dans le code.",
+      "Sur le même principe, j'ai intégré deux autres services : **Brevo**, pour les emails transactionnels (vérification d'inscription, réinitialisation de mot de passe), et **AWS S3**, pour héberger les photos d'articles.",
     ],
     footer:
       "Cette trace montre la capacité à intégrer un service tiers complexe en profondeur, tout en restant capable de brancher d'autres API sur le même modèle.",
@@ -249,15 +242,17 @@ const sections = [
         keywords: ["automatiser le lancement au démarrage"],
       },
     ],
-    image: traceDeploiement,
+    image: traceConfig,
     imageAlt: "Capture du fichier JSON de configuration qui pilote l'afficheur",
-    caption: "Trace 3 : fichier JSON de configuration qui pilote le contenu de l'afficheur",
+    caption:
+      "Trace 3 : fichier JSON de configuration qui pilote le contenu de l'afficheur",
     intro:
-      "La trace n°3 présente un lecteur d'affichage dynamique que j'ai conçu pour diffuser un contenu en plein écran — une vidéo, un site web ou une image — sur différents postes, et dont le comportement est piloté à distance depuis un simple fichier de configuration.",
+      "La trace n°3 présente un lecteur d'affichage dynamique que j'ai conçu pour diffuser un contenu en plein écran — **une vidéo**, un **site web** ou une **image** — sur différents postes, et dont le comportement est piloté à distance depuis un simple fichier de configuration.",
     paragraphs: [
-      "Le cœur du système est un JSON récupéré au démarrage depuis un sous-domaine d'appup, le serveur de l'entreprise. Ce fichier décrit ce qui doit s'afficher : le type de média (vidéo, site ou image), l'URL ou le fichier à charger, ainsi que l'orientation portrait ou paysage. Il permet de piloter l'affichage via une configuration JSON distante : modifier ce fichier suffit à changer le contenu d'un écran, sans se déplacer ni toucher au code embarqué sur la machine.",
-      "Pour que le poste reste autonome, il a fallu automatiser le lancement au démarrage : un script se déclenche au boot, va chercher la configuration à jour, prépare le média puis ouvre l'affichage en plein écran, sans aucune intervention humaine.",
-      "Le même script devait pouvoir tourner sur plusieurs environnements ; j'ai donc cherché à déployer une même application sur plusieurs supports — un Raspberry Pi sous Linux, une borne tactile et un PC Windows — en n'adaptant que la couche de lancement propre à chaque système.",
+      "Le cœur du système est un **JSON** récupéré au démarrage depuis un sous-domaine d'appup, le serveur de l'entreprise. Ce fichier décrit ce qui doit s'afficher : le type de média (vidéo, site ou image), l'URL ou le fichier à charger, ainsi que l'orientation portrait ou paysage. Il permet de piloter l'affichage via une configuration JSON distante : modifier ce fichier suffit à changer le contenu d'un écran, sans se déplacer ni toucher au code embarqué sur la machine.",
+      "Pour que ces changements soient pris en compte rapidement, le script ne lit pas seulement la configuration au démarrage : il la revérifie automatiquement toutes les 5 minutes. Dès qu'il détecte que l'URL ou le média a changé, il met à jour l'affichage sans qu'il soit nécessaire de redémarrer le poste.",
+      "Pour que le poste reste autonome, il a fallu automatiser le lancement au démarrage : un **script** se déclenche au boot, va chercher la **configuration** à jour, prépare le média puis ouvre l'affichage en plein écran, sans aucune intervention humaine.",
+      "Le même script devait pouvoir tourner sur plusieurs environnements ; j'ai donc cherché à déployer une même application sur plusieurs supports — un **Raspberry** Pi sous Linux, une **borne** tactile et un **PC Windows** — en n'adaptant que la couche de lancement propre à chaque système.",
       "Enfin, dans tous les cas il fallait configurer un poste en mode kiosque : un affichage plein écran sans barre de navigation ni curseur, un contenu verrouillé et une relance automatique en cas de coupure, pour qu'un écran laissé sans surveillance affiche toujours le bon contenu.",
     ],
     footer:
@@ -315,7 +310,7 @@ const traceEvaluations = {
   },
   trace2: {
     level: "acquis",
-    text: "Je sais <strong>intégrer un service tiers de bout en bout</strong> en m'appuyant sur sa documentation, et j'ai <strong>reproduit la démarche sur trois services</strong> (Stripe, Brevo, AWS S3). Le point qui me demande encore de la rigueur, ce sont les <strong>flux asynchrones</strong> : les webhooks Stripe fonctionnent, mais leur <strong>fiabilité</strong> (idempotence, rejeu) reste à consolider.",
+    text: "Je sais <strong>intégrer un service tiers de bout en bout</strong> en m'appuyant sur sa documentation, et j'ai <strong>reproduit la démarche sur trois services</strong> (Stripe, Brevo, AWS S3). Le point qui me demande encore de la rigueur, ce sont les <strong>flux asynchrones</strong> : les webhooks Stripe fonctionnent, mais leur <strong>fiabilité</strong> reste à consolider.",
   },
   trace3: {
     level: "consolider",
@@ -332,13 +327,24 @@ const evaluatedTraces = sections.filter(
 const traceEval = (trace) =>
   traceEvaluations[trace.id] ?? { level: "acquis", text: "" };
 
-const activeSection = ref("trace1");
+// La trace ouverte peut être imposée par l'URL (?section=trace2),
+// notamment via les liens de la page d'accueil.
+const route = useRoute();
+const sectionIds = sections.map((section) => section.id);
+const resolveSection = (value) =>
+  sectionIds.includes(value) ? value : "trace1";
+
+const activeSection = ref(resolveSection(route.query.section));
+
+watch(
+  () => route.query.section,
+  (value) => {
+    activeSection.value = resolveSection(value);
+  },
+);
 
 const escapeHtml = (value) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -383,6 +389,8 @@ const highlightSkills = (text, section) => {
     lastIndex = match.index + match[0].length;
   }
   result += escapeHtml(text.slice(lastIndex));
+  // **gras** -> <strong>gras</strong> (les ** ne sont pas échappés par escapeHtml)
+  result = result.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   return result;
 };
 
@@ -411,9 +419,9 @@ const currentSection = computed(() => {
 .titleCard {
   padding: 1.5rem;
   border-radius: 1.5rem;
-  background: rgba(255, 250, 242, 0.92);
-  border: 1px solid rgba(24, 58, 42, 0.14);
-  box-shadow: 0 20px 50px rgba(24, 58, 42, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   backdrop-filter: blur(8px);
 }
 
@@ -425,21 +433,21 @@ const currentSection = computed(() => {
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  color: #27483b;
+  color: var(--text);
 }
 
 h2 {
   margin: 0;
   font-size: 35px;
   line-height: 1.05;
-  color: #183a2a;
+  color: var(--heading);
 }
 
 .trace1-intro {
   margin-top: 1rem;
   padding: 1rem 1rem 0.25rem;
   border-radius: 1rem;
-  background: rgba(24, 58, 42, 0.04);
+  background: rgba(148, 163, 184, 0.08);
 }
 
 /* L'image (à gauche) est habillée par le texte : le texte commence à
@@ -475,10 +483,10 @@ h2 {
   position: relative;
   padding: 0.6rem;
   border-radius: 0.9rem;
-  border: 2px solid rgba(24, 58, 42, 0.16);
+  border: 2px solid var(--border-strong);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  background: rgba(148, 163, 184, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
 }
 
 .trace-photo__image img {
@@ -493,7 +501,7 @@ h2 {
   text-align: center;
   font-size: 0.95rem;
   font-style: italic;
-  color: #183a2a;
+  color: var(--heading);
 }
 
 /* Trace avec cadres (trace 2) : pas de cadre/padding autour pour que
@@ -506,7 +514,7 @@ h2 {
 /* Cadres de couleur superposés sur la capture */
 .trace-frame {
   position: absolute;
-  border: 3px solid var(--fc, #183a2a);
+  border: 3px solid var(--fc, var(--heading));
   border-radius: 8px;
   pointer-events: none;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
@@ -518,7 +526,7 @@ h2 {
   left: -3px;
   padding: 0.05rem 0.45rem;
   border-radius: 0.4rem;
-  background: var(--fc, #183a2a);
+  background: var(--fc, var(--heading));
   color: #fff;
   font-size: 0.72rem;
   font-weight: 700;
@@ -554,7 +562,7 @@ h2 {
   margin: 0 0 0.75rem;
   font-size: 1.4rem;
   line-height: 1.2;
-  color: #183a2a;
+  color: var(--heading);
 }
 
 .pill {
@@ -567,63 +575,68 @@ h2 {
 }
 
 .pill-red {
-  color: #7d171b;
+  color: #fca5a5;
   background: rgba(225, 43, 53, 0.15);
 }
 
 .pill-green {
-  color: #1c5c36;
+  color: #86efac;
   background: rgba(46, 184, 97, 0.14);
 }
 
 .pill-orange {
-  color: #8a4a09;
+  color: #fcd34d;
   background: rgba(245, 159, 11, 0.2);
 }
 
 .pill-blue {
-  color: #0f4e73;
+  color: #7dd3fc;
   background: rgba(40, 166, 237, 0.16);
 }
 
 .pill-purple {
-  color: #6d28d9;
+  color: #c4b5fd;
   background: rgba(124, 58, 237, 0.15);
 }
 
 .pill-teal {
-  color: #0f766e;
+  color: #5eead4;
   background: rgba(13, 148, 136, 0.16);
 }
 
 .pill-pink {
-  color: #be185d;
+  color: #f9a8d4;
   background: rgba(219, 39, 119, 0.14);
 }
 
 .pill-brown {
-  color: #7a4a2b;
+  color: #d6b08c;
   background: rgba(146, 99, 55, 0.18);
 }
 
 .pill-indigo {
-  color: #3730a3;
+  color: #a5b4fc;
   background: rgba(99, 102, 241, 0.18);
 }
 
 .pill-cyan {
-  color: #155e75;
+  color: #67e8f9;
   background: rgba(6, 182, 212, 0.18);
 }
 
 .pill-lime {
-  color: #3f6212;
+  color: #bef264;
   background: rgba(132, 204, 22, 0.22);
 }
 
 .pill-amber {
-  color: #854d0e;
+  color: #fcd34d;
   background: rgba(234, 179, 8, 0.22);
+}
+
+:deep(strong) {
+  color: var(--heading);
+  font-weight: 700;
 }
 
 :deep(.hl) {
@@ -633,62 +646,62 @@ h2 {
 }
 
 :deep(.hl-red) {
-  color: #7d171b;
+  color: #fca5a5;
   background: rgba(225, 43, 53, 0.15);
 }
 
 :deep(.hl-green) {
-  color: #1c5c36;
+  color: #86efac;
   background: rgba(46, 184, 97, 0.16);
 }
 
 :deep(.hl-orange) {
-  color: #8a4a09;
+  color: #fcd34d;
   background: rgba(245, 159, 11, 0.2);
 }
 
 :deep(.hl-blue) {
-  color: #0f4e73;
+  color: #7dd3fc;
   background: rgba(40, 166, 237, 0.16);
 }
 
 :deep(.hl-purple) {
-  color: #6d28d9;
+  color: #c4b5fd;
   background: rgba(124, 58, 237, 0.15);
 }
 
 :deep(.hl-teal) {
-  color: #0f766e;
+  color: #5eead4;
   background: rgba(13, 148, 136, 0.16);
 }
 
 :deep(.hl-pink) {
-  color: #be185d;
+  color: #f9a8d4;
   background: rgba(219, 39, 119, 0.14);
 }
 
 :deep(.hl-brown) {
-  color: #7a4a2b;
+  color: #d6b08c;
   background: rgba(146, 99, 55, 0.18);
 }
 
 :deep(.hl-indigo) {
-  color: #3730a3;
+  color: #a5b4fc;
   background: rgba(99, 102, 241, 0.2);
 }
 
 :deep(.hl-cyan) {
-  color: #155e75;
+  color: #67e8f9;
   background: rgba(6, 182, 212, 0.2);
 }
 
 :deep(.hl-lime) {
-  color: #3f6212;
+  color: #bef264;
   background: rgba(132, 204, 22, 0.24);
 }
 
 :deep(.hl-amber) {
-  color: #854d0e;
+  color: #fcd34d;
   background: rgba(234, 179, 8, 0.24);
 }
 
@@ -696,7 +709,7 @@ h2 {
   margin: 1.1rem 0 0;
   font-size: 1.05rem;
   line-height: 1.7;
-  color: #27483b;
+  color: var(--text);
 }
 
 .capturesTitle {
@@ -714,7 +727,7 @@ h2 {
 }
 
 .textCard.muted {
-  color: rgba(39, 72, 59, 0.78);
+  color: var(--text-muted);
 }
 
 /* ---- Onglet BILAN : cartes d'évaluation par savoir-faire ---- */
@@ -733,7 +746,7 @@ h2 {
 
 .bilan-legend__label {
   font-weight: 700;
-  color: #27483b;
+  color: var(--text);
 }
 
 .eval-card {
@@ -753,7 +766,7 @@ h2 {
   margin: 0;
   font-size: 1.3rem;
   line-height: 1.2;
-  color: #183a2a;
+  color: var(--heading);
 }
 
 .eval-head__rating {
@@ -771,7 +784,7 @@ h2 {
   width: 1.6rem;
   height: 0.45rem;
   border-radius: 999px;
-  background: rgba(24, 58, 42, 0.12);
+  background: rgba(148, 163, 184, 0.16);
 }
 
 .eval-meter__seg--on.eval-meter__seg--maitrise {
@@ -790,8 +803,8 @@ h2 {
   margin-top: 0.25rem;
   padding: 0.85rem 1rem;
   border-radius: 0.9rem;
-  background: rgba(24, 58, 42, 0.04);
-  border-left: 4px solid rgba(24, 58, 42, 0.25);
+  background: rgba(148, 163, 184, 0.08);
+  border-left: 4px solid var(--border-strong);
 }
 
 .eval-verdict--maitrise {
@@ -811,14 +824,14 @@ h2 {
   font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0.02em;
-  color: #183a2a;
+  color: var(--heading);
 }
 
 .eval-verdict__text {
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  color: #27483b;
+  color: var(--text);
 }
 
 .level {
@@ -832,19 +845,19 @@ h2 {
 }
 
 .level-maitrise {
-  color: #1c5c36;
+  color: #86efac;
   background: rgba(46, 184, 97, 0.16);
   border-color: rgba(46, 184, 97, 0.4);
 }
 
 .level-acquis {
-  color: #0f4e73;
+  color: #7dd3fc;
   background: rgba(40, 166, 237, 0.16);
   border-color: rgba(40, 166, 237, 0.4);
 }
 
 .level-consolider {
-  color: #8a4a09;
+  color: #fcd34d;
   background: rgba(245, 159, 11, 0.2);
   border-color: rgba(245, 159, 11, 0.45);
 }
@@ -856,18 +869,39 @@ h2 {
 }
 
 .internal-nav__tab {
+  position: relative;
   border: 0;
   padding: 0.9rem 1.1rem;
   border-radius: 0.65rem 0.65rem 0 0;
-  background: rgba(255, 255, 255, 0.08);
-  color: #183a2a;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
   font-weight: 700;
+  opacity: 0.75;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.internal-nav__tab:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--heading);
+  opacity: 1;
 }
 
 .internal-nav__tab--active {
-  background: rgba(255, 250, 242, 0.92);
-  color: #183a2a;
+  background: var(--surface);
+  color: var(--heading);
+  opacity: 1;
+  box-shadow: inset 0 3px 0 0 var(--accent), 0 -4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.internal-nav__tab--active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background: var(--surface);
 }
 
 @media (max-width: 720px) {

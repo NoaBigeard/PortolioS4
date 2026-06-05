@@ -34,8 +34,8 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.25rem;
-  background: rgba(245, 239, 226, 0.92);
-  border-bottom: 1px solid rgba(24, 58, 42, 0.14);
+  background: rgba(15, 23, 42, 0.82);
+  border-bottom: 1px solid var(--border);
   backdrop-filter: blur(10px);
 }
 .nameAndMail {
@@ -48,7 +48,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  color: #183a2a;
+  color: var(--heading);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -59,8 +59,8 @@
   width: 0.9rem;
   height: 0.9rem;
   border-radius: 999px;
-  background: #183a2a;
-  box-shadow: 0 0 0 6px rgba(24, 58, 42, 0.1);
+  background: var(--accent);
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.22);
 }
 
 .nav-links {
@@ -81,11 +81,11 @@
   padding: 0.72rem 1rem;
   border-radius: 999px;
   text-decoration: none;
-  color: #183a2a;
+  color: var(--text);
   font-weight: 600;
   line-height: 1;
-  background: rgba(255, 250, 242, 0.9);
-  border: 1px solid rgba(24, 58, 42, 0.12);
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--border);
   transition:
     transform 0.2s ease,
     background-color 0.2s ease,
@@ -95,15 +95,16 @@
 
 .nav-links a:hover {
   transform: translateY(-1px);
-  background: #efe0c5;
-  border-color: rgba(24, 58, 42, 0.2);
+  color: var(--heading);
+  background: rgba(37, 99, 235, 0.18);
+  border-color: var(--accent);
 }
 
 .nav-links a.router-link-active,
 .nav-links a.router-link-exact-active {
-  background: #183a2a;
-  color: #f7f3ea;
-  border-color: #183a2a;
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
 }
 
 @media (max-width: 720px) {

@@ -1,23 +1,50 @@
+:root {
+  /* ---- Thème « dark dev » : tokens de design ---- */
+  --bg-1: #0f172a;
+  --bg-2: #0b1322;
+  --surface: #1e293b;
+  --surface-2: #243349;
+  --border: rgba(148, 163, 184, 0.16);
+  --border-strong: rgba(148, 163, 184, 0.3);
+  --text: #cbd5e1;
+  --text-muted: #94a3b8;
+  --heading: #f1f5f9;
+  --accent: #2563eb;
+  --accent-2: #1e40af;
+  --accent-soft: #93c5fd;
+  --shadow: 0 18px 40px rgba(2, 6, 23, 0.55);
+}
+
 * {
   box-sizing: border-box;
 }
 
 html {
-  background: #f5efe2;
+  background: var(--bg-1);
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  color: #183a2a;
+  min-height: 100vh;
+  color: var(--text);
   background:
     radial-gradient(
-      circle at top left,
-      rgba(24, 58, 42, 0.08),
-      transparent 28%
+      1200px 600px at 15% -10%,
+      rgba(37, 99, 235, 0.14),
+      transparent 60%
     ),
-    linear-gradient(180deg, #f7f3ea 0%, #f3ead9 100%);
-  font-family: Georgia, "Times New Roman", serif;
+    radial-gradient(
+      1000px 520px at 100% 0%,
+      rgba(59, 130, 246, 0.1),
+      transparent 55%
+    ),
+    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  background-attachment: fixed;
+  font-family:
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
