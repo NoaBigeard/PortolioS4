@@ -159,7 +159,14 @@ const sections = [
     caption:
       "Trace 4 : tableau Trello — du backlog aux sprints, avec estimation en story points",
     frames: [
-      { color: "blue", x: "0.4%", y: "3%", w: "16%", h: "94%", label: "Backlog" },
+      {
+        color: "blue",
+        x: "0.4%",
+        y: "3%",
+        w: "16%",
+        h: "94%",
+        label: "Backlog",
+      },
       {
         color: "orange",
         x: "18%",
@@ -174,7 +181,7 @@ const sections = [
         y: "3%",
         w: "18.3%",
         h: "94%",
-        label: "Récolte Sprint 1",
+        label: "Récolte Sprint",
       },
     ],
     intro:
@@ -183,11 +190,10 @@ const sections = [
       "Tout commence à gauche, dans l'encadré bleu, le « **Bac à sable** ». C'est là que je devais d'abord recueillir le besoin du client : chaque demande de **Marouane**, formulée à l'oral, y était notée pour ne rien perdre. Je pouvais ensuite transformer le besoin en backlog en créant une carte pour chaque fonctionnalité à développer.",
       "Avant de lancer une tâche, l'étape suivante était de découper et estimer les tâches. Le découpage passe par la **checklist** de chaque carte, qui éclate la fonctionnalité en sous-tâches concrètes ; l'estimation, elle, se lit sur les pastilles de couleur des cartes : ce sont des **story points**, inspirés de la suite de **Fibonacci**, qui mesurent l'effort de chaque tâche et évitent de surcharger un sprint.",
       "Au centre, l'encadré orange montre comment je pouvais piloter l'avancement par sprints. Une carte tirée du backlog progresse de « **Sprint to do** » à « **Sprint en cours** » puis « **Sprint done** » : ce flux donne en un coup d'œil l'état d'avancement de la semaine.",
-      "À droite, l'encadré rouge correspond à la colonne « **Récolte Sprint 1** » : elle regroupe les tâches que j'ai terminées durant la première semaine de stage. Garder cette récolte d'un sprint à l'autre permet de visualiser concrètement ce qui a été livré et de mesurer la progression du projet.",
+      "À droite, l'encadré rouge correspond à la colonne « **Récolte Sprint** » : elle regroupe les tâches que j'ai terminées durant la première semaine de stage. Garder cette récolte d'un sprint à l'autre permet de visualiser concrètement ce qui a été livré et de mesurer la progression du projet.",
       "Je suis resté sur une utilisation volontairement légère de Trello : il m'a surtout servi de **fil conducteur** pour ne pas perdre de vue les fonctionnalités issues du **cahier des charges** et garder une trace de ce qui était fait, en cours ou à faire.",
     ],
-    footer:
-      "Cette trace montre comment un outil de gestion de projet, même utilisé simplement, permet de transformer un besoin en tâches estimées et d'en suivre l'avancement.",
+    footer: "",
   },
   {
     id: "trace2",
@@ -196,22 +202,22 @@ const sections = [
     skills: [
       {
         label: "versionner régulièrement le code",
-        color: "red",
+        color: "purple",
         keywords: ["versionner régulièrement le code"],
       },
       {
         label: "rédiger des messages de commit clairs",
-        color: "green",
+        color: "teal",
         keywords: ["rédiger des messages de commit clairs"],
       },
       {
         label: "recueillir un retour en réunion de suivi",
-        color: "orange",
+        color: "pink",
         keywords: ["recueillir un retour en réunion de suivi"],
       },
       {
         label: "ajuster le travail après un retour",
-        color: "blue",
+        color: "brown",
         keywords: ["ajuster le travail après un retour"],
       },
     ],
@@ -224,11 +230,10 @@ const sections = [
       "La trace n°5 retrace l'historique **Git** du projet **APIConnection**. Versionner régulièrement le code et tenir des réunions de suivi font partie des mécanismes de suivi de projet attendus pendant le stage.",
     paragraphs: [
       "Chaque commit marque une étape datée et nommée poussée sur **GitHub**. Rédiger des messages de commit clairs permet de relire l'avancement comme un **journal de bord** et de retrouver à quel moment chaque fonctionnalité est arrivée.",
-      "Les deux **commits du 4 mai**, en orange sur la frise, illustrent le lien entre versioning et réunions de suivi. Lors d'un point avec mon maître de stage, j'ai noté deux corrections à apporter: passer les identifiants en **session** plutôt qu'en **localStorage**, et remplacer l'envoi du mail + mot de passe par du **Basic Auth**. Recueillir un retour en réunion de suivi, puis ajuster le travail après un retour, s'est traduit directement par les commits qui ont suivi.",
+      "Les deux **commits du 4 mai**, en orange sur la frise, illustrent le lien entre versioning et réunions de suivi. Lors d'un point avec mon maître de stage, j'ai noté deux corrections à apporter : passer les identifiants en **session** plutôt qu'en **localStorage**, et remplacer l'envoi du mail + mot de passe par du **Basic Auth**. Recueillir un retour en réunion de suivi, puis ajuster le travail après un retour, s'est traduit directement par les commits qui ont suivi.",
       "Avec **7 commits** sur la durée du stage, mon rythme de versioning est resté modeste : j'ai eu tendance à regrouper plusieurs jours de travail dans un même commit. C'est précisément le point que je veux améliorer, comme détaillé dans le bilan.",
     ],
-    footer:
-      "Cette trace montre que le dépôt Git, couplé aux retours de réunion, sert de mémoire du projet : on y lit la chronologie des fonctionnalités et l'impact concret des points de suivi.",
+    footer: "",
   },
   {
     id: "bilan",
@@ -236,8 +241,7 @@ const sections = [
     title: "Bilan",
     intro:
       "Le bilan du suivi de projet reprend les deux savoir-faire travaillés : le pilotage des tâches avec un outil de gestion (Trello) et la participation aux mécanismes de suivi (versioning et réunions de suivi). Au-delà des outils, le fil conducteur a été de garder en permanence une trace de ce qui est fait, en cours et à faire.",
-    footer:
-      "Ce bilan donne une vision claire de ma compréhension des outils de suivi de projet et de la principale marge de progression : davantage de régularité dans le versioning et un suivi plus rigoureux et mieux documenté.",
+    footer: "",
   },
 ];
 
@@ -269,11 +273,11 @@ const levelScore = {
 const traceEvaluations = {
   trace1: {
     level: "acquis",
-    text: "Je sais  structurer un projet en backlog, sprints et story points  avec Trello. Mon utilisation est toutefois restée  légère  : je n'ai pas tenu le tableau à jour tous les jours et je n'ai pas exploité les  indicateurs  (burnup, vélocité). C'est un outil que je veux  utiliser plus rigoureusement .",
+    text: "Je sais <strong>structurer un projet en backlog, sprints et story points</strong> avec Trello. Mon utilisation est toutefois restée <strong>légère</strong> : je n'ai pas tenu le tableau à jour tous les jours et je n'ai pas exploité les <strong>indicateurs</strong> (burnup, vélocité). C'est un outil que je veux <strong>utiliser plus rigoureusement</strong>.",
   },
   trace2: {
     level: "consolider",
-    text: "Le  lien réunion de suivi → action  est clair, mais mon  rythme de commits reste trop espacé  (6 commits, des journées entières regroupées). Je veux  committer plus souvent , adopter une  convention de messages  et formaliser des  comptes-rendus de réunion datés  dans le dépôt.",
+    text: "Le <strong>lien réunion de suivi → action</strong> est clair, mais mon <strong>rythme de commits reste trop espacé</strong> (7 commits, des journées entières regroupées). Je veux <strong>committer plus souvent</strong>, adopter une <strong>convention de messages</strong> et formaliser des <strong>comptes-rendus de réunion datés</strong> dans le dépôt.",
   },
 };
 
@@ -319,7 +323,11 @@ const highlightSkills = (text, section) => {
   });
   // Les renvois aux cadres ("encadré bleu"…) sont colorés mais sans fond.
   (section?.highlights ?? []).forEach((highlight) =>
-    entries.push({ keyword: highlight.text, color: highlight.color, plain: true }),
+    entries.push({
+      keyword: highlight.text,
+      color: highlight.color,
+      plain: true,
+    }),
   );
   if (!entries.length) return escapeHtml(text);
 
@@ -537,6 +545,26 @@ h2 {
   background: rgba(40, 166, 237, 0.16);
 }
 
+.pill-purple {
+  color: #c4b5fd;
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.pill-teal {
+  color: #5eead4;
+  background: rgba(13, 148, 136, 0.16);
+}
+
+.pill-pink {
+  color: #f9a8d4;
+  background: rgba(219, 39, 119, 0.14);
+}
+
+.pill-brown {
+  color: #d6b08c;
+  background: rgba(146, 99, 55, 0.18);
+}
+
 :deep(strong) {
   color: var(--heading);
   font-weight: 700;
@@ -573,6 +601,26 @@ h2 {
 :deep(.hl-blue) {
   color: #7dd3fc;
   background: rgba(40, 166, 237, 0.16);
+}
+
+:deep(.hl-purple) {
+  color: #c4b5fd;
+  background: rgba(124, 58, 237, 0.15);
+}
+
+:deep(.hl-teal) {
+  color: #5eead4;
+  background: rgba(13, 148, 136, 0.16);
+}
+
+:deep(.hl-pink) {
+  color: #f9a8d4;
+  background: rgba(219, 39, 119, 0.14);
+}
+
+:deep(.hl-brown) {
+  color: #d6b08c;
+  background: rgba(146, 99, 55, 0.18);
 }
 
 .textCard {
@@ -734,7 +782,10 @@ h2 {
   font-weight: 700;
   opacity: 0.75;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .internal-nav__tab:hover {
@@ -747,7 +798,9 @@ h2 {
   background: var(--surface);
   color: var(--heading);
   opacity: 1;
-  box-shadow: inset 0 3px 0 0 var(--accent), 0 -4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow:
+    inset 0 3px 0 0 var(--accent),
+    0 -4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .internal-nav__tab--active::after {

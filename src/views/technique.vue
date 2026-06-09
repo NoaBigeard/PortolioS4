@@ -1,7 +1,7 @@
 <template>
   <section class="technique-page">
     <div class="titleCard">
-      <h2>Présentation et évaluation de savoir-faire technique</h2>
+      <h2>Présentation et évaluation des savoir-faire techniques</h2>
       <p class="introText">
         Cette partie présente les savoir-faire techniques travaillés pendant le
         stage.
@@ -160,13 +160,12 @@ const sections = [
     intro:
       "La trace n°1 présente une API REST générique développée en **Node.js**, **Express** et **PostgreSQL**, conçue **depuis zéro** pour être réutilisable sur les futurs projets de l'entreprise.",
     paragraphs: [
-      "Pour garder un projet maintenable, j'ai cherché à concevoir une architecture en couches, répartie en quatre responsabilités distinctes : les **Routes** servent à créer des routes HTTP propres à chaque table, les **Controllers** orchestrent la requête et la gestion d'erreur, les **Services** portent la logique métier (un fichier par table) et les **Models** accèdent à la base de données. Le point d'entrée **Server.js** lit **information_schema** pour connaître les tables autorisées, puis génère automatiquement les fichiers de service avant de démarrer le serveur.",
+      "Pour garder un projet maintenable, j'ai cherché à concevoir une architecture en couches, répartie en quatre responsabilités distinctes : les **Routes** sont les points d'entrée de l'API — elles reçoivent chaque requête HTTP et l'aiguillent vers le bon Controller selon l'URL appelée —, les **Controllers** orchestrent la requête et la gestion d'erreur, les **Services** portent la logique métier (un fichier par table) et les **Models** accèdent à la base de données. Au démarrage, un **fichier serveur écrit en JavaScript** interroge la base de données pour récupérer la liste des tables autorisées, puis génère automatiquement un fichier de service pour chacune d'elles avant de lancer le serveur. Chaque fichier de service contient les opérations de base (lire, créer, modifier, supprimer) de sa table : l'intérêt est qu'ajouter une table à la base suffit à lui donner ses services, sans avoir à réécrire ce code à la main.",
       "Pour éviter de réécrire les mêmes opérations CRUD sur chaque table, la classe **TableBuilder** permet de construire des requêtes SQL de façon dynamique : SELECT, INSERT, UPDATE et DELETE, avec gestion du where, du orderBy, de la limit et de l'offset. Chaque INSERT renseigne automatiquement creation_date et change_date, et chaque UPDATE rafraîchit change_date, pour un comportement identique sur toutes les tables.",
-      "Pour sécuriser les endpoints, la sécurité s'appuie sur trois niveaux successifs. Un premier contrôle vérifie qu'une **clé d'API** valide accompagne la requête avant même d'atteindre la moindre route : sans cette clé, l'API reste inaccessible. Un second lit le **Basic Auth**, contrôle le mot de passe avec **bcrypt** et compare le niveau d'accès de l'utilisateur à celui requis. Enfin, toutes les requêtes passent par des **paramètres $1, $2…** pour fermer la porte à l'**injection SQL**.",
+      "Pour sécuriser les endpoints (les URL précises de l'API auxquelles on envoie une requête), la sécurité s'appuie sur trois niveaux successifs. Un premier contrôle vérifie qu'une **clé d'API** valide accompagne la requête avant même d'atteindre la moindre route : sans cette clé, l'API reste inaccessible. Un second lit le **Basic Auth**, contrôle le mot de passe avec **bcrypt** et compare le niveau d'accès de l'utilisateur à celui requis. Enfin, toutes les requêtes passent par des **paramètres $1, $2…** pour fermer la porte à l'**injection SQL**.",
       "Les suppressions sont des **soft delete** : la ligne est marquée **deleted = true** plutôt qu'effacée, et une route de restauration permet à l'administrateur de revenir en arrière sans perdre l'historique.",
     ],
-    footer:
-      "Cette trace justifie les choix d'architecture pour produire une API robuste, générique et sécurisée.",
+    footer: "",
   },
   {
     id: "trace2",
@@ -184,9 +183,11 @@ const sections = [
         keywords: ["intégrer une API tierce dans un projet existant"],
       },
       {
-        label: "sécuriser des clés d'API via variables d'environnement",
+        label: "sécuriser des clés d'API via des variables d'environnement",
         color: "pink",
-        keywords: ["sécuriser des clés d'API via variables d'environnement"],
+        keywords: [
+          "sécuriser des clés d'API via des variables d'environnement",
+        ],
       },
       {
         label: "gérer les flux asynchrones (redirections, webhooks)",
@@ -206,15 +207,14 @@ const sections = [
     ],
     highlights: [],
     intro:
-      "La trace n°2 ci-dessus est une capture du tableau de bord des événements **Stripe**, le service tiers que j'ai poussé le plus loin dans le projet e-commerce. L'enjeu était d'intégrer une API tierce dans un projet existant, puis de réagir correctement à tout ce que Stripe renvoie une fois le paiement effectué.",
+      "La trace n°2 ci-dessus est une capture du tableau de bord des événements **Stripe**, le service tiers que j'ai le plus approfondi dans le projet e-commerce. L'enjeu était d'intégrer une API tierce dans un projet existant, puis de réagir correctement à tout ce que Stripe renvoie une fois le paiement effectué.",
     paragraphs: [
       "Quand un client règle sa commande, Stripe ne se contente pas d'un simple « payé » : il déclenche tout un **enchaînement d'événements**. Tout en haut, l'encadré bleu correspond à l'événement que j'ai ouvert, invoice_payment.paid (le paiement de l'abonnement à 79,99 €). En dessous, l'encadré orange regroupe la suite de la chaîne : checkout.session.completed (l'achat est terminé), invoice.payment_succeeded (le paiement a réussi) puis invoice.paid (la facture est réglée).",
       "L'encadré rouge, à droite, montre les données de cet événement (Event data) : le montant amount_paid: 7999 — soit 79,99 € —, la devise eur et le statut status: \"paid\". C'est sur ces informations que mon serveur s'appuie pour valider la commande. Comme ces événements arrivent **en différé**, indépendamment de ce que fait l'utilisateur dans son navigateur, il a fallu gérer les flux asynchrones (redirections, webhooks) : Stripe notifie mon serveur dès qu'un événement se produit, plutôt que d'attendre une réponse immédiate.",
-      "Brancher Stripe a demandé de lire et comprendre une documentation technique dense pour repérer les bons événements à écouter, et de sécuriser des clés d'API via variables d'environnement en isolant la clé secrète et le secret du webhook dans un fichier **.env** plutôt que dans le code.",
-      "Sur le même principe, j'ai intégré deux autres services : **Brevo**, pour les emails transactionnels (vérification d'inscription, réinitialisation de mot de passe), et **AWS S3**, pour héberger les photos d'articles.",
+      "Connecter Stripe a demandé de lire et comprendre une documentation technique dense pour repérer les bons événements à écouter, et de sécuriser des clés d'API via des variables d'environnement en isolant la clé secrète et le secret du webhook dans un fichier **.env** plutôt que dans le code.",
+      "Sur le même principe, j'ai intégré deux autres services : **Brevo**, pour les mails transactionnels (vérification d'inscription, réinitialisation de mot de passe), et **AWS S3**, pour héberger les photos d'articles.",
     ],
-    footer:
-      "Cette trace montre la capacité à intégrer un service tiers complexe en profondeur, tout en restant capable de brancher d'autres API sur le même modèle.",
+    footer: "",
   },
   {
     id: "trace3",
@@ -249,14 +249,13 @@ const sections = [
     intro:
       "La trace n°3 présente un lecteur d'affichage dynamique que j'ai conçu pour diffuser un contenu en plein écran — **une vidéo**, un **site web** ou une **image** — sur différents postes, et dont le comportement est piloté à distance depuis un simple fichier de configuration.",
     paragraphs: [
-      "Le cœur du système est un **JSON** récupéré au démarrage depuis un sous-domaine d'appup, le serveur de l'entreprise. Ce fichier décrit ce qui doit s'afficher : le type de média (vidéo, site ou image), l'URL ou le fichier à charger, ainsi que l'orientation portrait ou paysage. Il permet de piloter l'affichage via une configuration JSON distante : modifier ce fichier suffit à changer le contenu d'un écran, sans se déplacer ni toucher au code embarqué sur la machine.",
-      "Pour que ces changements soient pris en compte rapidement, le script ne lit pas seulement la configuration au démarrage : il la revérifie automatiquement toutes les 5 minutes. Dès qu'il détecte que l'URL ou le média a changé, il met à jour l'affichage sans qu'il soit nécessaire de redémarrer le poste.",
-      "Pour que le poste reste autonome, il a fallu automatiser le lancement au démarrage : un **script** se déclenche au boot, va chercher la **configuration** à jour, prépare le média puis ouvre l'affichage en plein écran, sans aucune intervention humaine.",
+      "Le cœur du système est un fichier **JSON** récupéré au démarrage depuis un sous-domaine d'appup, le serveur de l'entreprise. Ce fichier décrit ce qui doit s'afficher : le type de média (vidéo, site ou image), l'URL ou le fichier à charger, ainsi que l'orientation portrait ou paysage. Il permet de piloter l'affichage via une configuration JSON distante : modifier ce fichier suffit à changer le contenu d'un écran, sans se déplacer ni toucher au code embarqué sur la machine.",
+      "Pour que le poste reste autonome, il a fallu automatiser le lancement au démarrage : un **script** se déclenche à l'allumage, va chercher la **configuration** à jour, prépare le média puis ouvre l'affichage en plein écran, sans aucune intervention humaine.",
+      "Pour que ces changements soient pris en compte rapidement, le script ne lit pas seulement la configuration au démarrage : il la revérifie automatiquement toutes les 5 minutes. Dès qu'il détecte que l'URL ou que le média a changé, il met à jour l'affichage sans qu'il soit nécessaire de redémarrer le poste.",
       "Le même script devait pouvoir tourner sur plusieurs environnements ; j'ai donc cherché à déployer une même application sur plusieurs supports — un **Raspberry** Pi sous Linux, une **borne** tactile et un **PC Windows** — en n'adaptant que la couche de lancement propre à chaque système.",
       "Enfin, dans tous les cas il fallait configurer un poste en mode kiosque : un affichage plein écran sans barre de navigation ni curseur, un contenu verrouillé et une relance automatique en cas de coupure, pour qu'un écran laissé sans surveillance affiche toujours le bon contenu.",
     ],
-    footer:
-      "Cette trace illustre la conception d'un afficheur autonome, configurable à distance et déployable sur des supports hétérogènes à partir d'une base de code commune.",
+    footer: "",
   },
   {
     id: "bilan",
@@ -271,8 +270,7 @@ const sections = [
       "Ces trois traces partagent une même logique : externaliser ce qui change souvent (le schéma de base pour l'API, les clés pour les services tiers, le contenu et l'orientation pour l'afficheur) afin de modifier le comportement sans retoucher au code. C'est la principale compétence que je retiens du stage.",
       "Avec du recul, je m'y prendrais autrement sur deux points : mettre en place les webhooks Stripe dès le départ plutôt que d'attendre, et écrire des tests automatisés — pour les services générés de l'API comme pour la lecture de la configuration de l'afficheur — afin de fiabiliser ces briques réutilisées partout.",
     ],
-    footer:
-      "Ce bilan donne une vision claire des compétences mobilisées — architecture, intégration et déploiement — et de celles à approfondir, notamment les tests automatisés.",
+    footer: "",
   },
 ];
 
@@ -289,7 +287,7 @@ const syntheses = {
   trace1:
     "Cette première trace portait sur le socle de l'API. Il a d'abord fallu concevoir une architecture en couches (Routes, Controllers, Services, Models) pour garder le projet maintenable, puis créer des routes HTTP propres à chaque table. Côté base de données, j'ai appris à construire des requêtes SQL de façon dynamique avec une classe réutilisable, et surtout à sécuriser les endpoints sur trois niveaux successifs (clé d'API, Basic Auth, requêtes paramétrées).",
   trace2:
-    "Cette trace portait sur l'ouverture du projet vers l'extérieur. Pour brancher Stripe, Brevo et AWS S3, j'ai dû lire et comprendre une documentation technique dense, puis intégrer une API tierce dans un projet existant sans casser le reste. J'ai pris l'habitude de sécuriser des clés d'API via variables d'environnement, et l'enjeu le plus formateur a été de gérer les flux asynchrones (redirections, webhooks) déclenchés par Stripe après le paiement.",
+    "Cette trace portait sur l'ouverture du projet vers l'extérieur. Pour connecter Stripe, Brevo et AWS S3, j'ai dû lire et comprendre une documentation technique dense, puis intégrer une API tierce dans un projet existant sans casser le reste. J'ai pris l'habitude de sécuriser des clés d'API via des variables d'environnement, et l'enjeu le plus formateur a été de gérer les flux asynchrones (redirections, webhooks) déclenchés par Stripe après le paiement.",
   trace3:
     "Cette trace portait sur la diffusion d'un contenu en dehors du navigateur classique. L'objectif était de déployer une même application sur plusieurs supports (Raspberry Pi, borne, PC Windows) à partir d'une base commune. Sur chaque poste, il a fallu configurer un poste en mode kiosque puis automatiser le lancement au démarrage, tandis que le contenu reste externalisé : je peux piloter l'affichage via une configuration JSON distante récupérée depuis appup.",
 };
@@ -878,7 +876,10 @@ h2 {
   font-weight: 700;
   opacity: 0.75;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .internal-nav__tab:hover {
@@ -891,7 +892,9 @@ h2 {
   background: var(--surface);
   color: var(--heading);
   opacity: 1;
-  box-shadow: inset 0 3px 0 0 var(--accent), 0 -4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow:
+    inset 0 3px 0 0 var(--accent),
+    0 -4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .internal-nav__tab--active::after {

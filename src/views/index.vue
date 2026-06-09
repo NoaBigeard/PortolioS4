@@ -3,7 +3,7 @@
     <div class="titleCard">
       <h2>Présentation</h2>
       <p class="textCard">
-        Ce site présente les savoir-faire et savoirs-être que j'ai acquis tout
+        Ce site présente les savoir-faire et savoir-être que j'ai acquis tout
         au long de mon stage de BUT2 Informatique, réalisé du 7 avril au 5 juin
         2026 chez APPUP. Trois parties principales sont accessibles depuis le
         menu en haut à droite : les compétences techniques, le suivi de projet,
@@ -28,20 +28,27 @@
         l'IUT Nord Franche-Comté, présent dans le même cadre.
       </p>
       <p class="textCard">
+        APPUP dispose déjà d'une solution de gestion de connexion, développée en
+        interne par le responsable. Elle n'avait toutefois pas vocation à être
+        réutilisée pour ce stage : la démarche était avant tout
+        <strong>pédagogique</strong>. Plutôt que de repartir de l'existant,
+        l'idée était que je conçoive ma propre API d'authentification, pour en
+        comprendre tous les rouages et obtenir une base que je maîtrise —
+        réutilisable plus tard dans d'autres projets nécessitant un système de
+        connexion.
+      </p>
+      <p class="textCard">
+        Concrètement, le projet a consisté à <strong>concevoir et développer
+        depuis zéro une API REST de connexion et un site e-commerce fictif</strong>
+        qui s'appuie dessus. L'objectif est double : un apprentissage concret sur
+        une stack complète (backend + frontend + services tiers) et une base
+        réutilisable pour de futurs projets.
+      </p>
+      <p class="textCard">
         Les conditions de travail ont été très favorables : un open space calme,
         une connexion internet stable, un accès direct et permanent au maître de
         stage pour échanger sur les choix techniques, et une grande autonomie
         sur l'organisation de mon temps.
-      </p>
-      <p class="textCard">
-        Une solution de gestion de connexion existe déjà au sein d'APPUP,
-        développée en interne par le responsable. Cependant, elle n'est pas
-        directement réutilisable dans le cadre du sujet de stage. Le projet
-        consiste donc à <strong>concevoir et développer depuis zéro une API
-        REST de connexion et un site e-commerce fictif</strong> qui s'appuie
-        dessus. L'objectif est double : produire un apprentissage concret sur
-        une stack complète (backend + frontend + services tiers), et obtenir une
-        base réutilisable pour de futurs projets.
       </p>
     </div>
 
@@ -60,60 +67,67 @@
             :to="{ name: 'technique', query: { section: 'trace1' } }"
             >API REST générique</router-link
           >
-          en Node.js / Express / PostgreSQL avec un TableBuilder maison pour les
-          requêtes SQL paramétrées et une génération automatique des services à
-          partir des tables autorisées.
-        </li>
-        <li>
-          Mise en place d'un
-          <router-link
-            class="skill-link"
-            :to="{ name: 'technique', query: { section: 'trace1' } }"
-            >système d'authentification</router-link
-          >
-          complet : Basic
-          Auth, clé d'API par header, niveaux d'accès,
-          inscription avec code de vérification par mail, réinitialisation du mot de passe par
-          token, hashage bcrypt.
+          en Node.js / Express / PostgreSQL : architecture en couches, classe
+          TableBuilder réutilisable, génération automatique des services et
+          authentification complète (clé d'API, Basic Auth, bcrypt).
         </li>
         <li>
           Intégration de
           <router-link
             class="skill-link"
             :to="{ name: 'technique', query: { section: 'trace2' } }"
-            >trois services tiers majeurs</router-link
+            >trois services tiers</router-link
           >
-          : <strong>Stripe</strong> (paiement, abonnements, Customer Portal,
-          webhooks), <strong>Brevo</strong> (mails transactionnels avec
-          templates en base) et <strong>AWS S3</strong> (stockage des photos
-          d'articles via multer-s3).
-        </li>
-        <li>
-          Développement d'un site e-commerce en <strong>Vue 3 / Vite</strong> :
-          catalogue, panier persistant, espace utilisateur, tableau de bord
-          admin (gestion des produits, utilisateurs, configuration globale) et
-          tarif réduit pour les membres premium.
+          : <strong>Stripe</strong> (paiement, abonnements, webhooks),
+          <strong>Brevo</strong> (mails transactionnels) et
+          <strong>AWS S3</strong> (stockage des photos d'articles).
         </li>
         <li>
           Conception d'un
           <router-link
             class="skill-link"
             :to="{ name: 'technique', query: { section: 'trace3' } }"
-            >lecteur d'affichage dynamique</router-link
+            >afficheur multi-support</router-link
           >
-          piloté par un
-          fichier JSON distant (vidéo, site ou image, orientation
-          configurable), déployable en mode kiosque sur Raspberry Pi, borne
-          tactile et PC Windows.
+          piloté par un fichier JSON distant (vidéo, site ou image),
+          déployable en mode kiosque sur Raspberry Pi, borne tactile et PC
+          Windows.
         </li>
         <li>
           <router-link
             class="skill-link"
             :to="{ name: 'suivi', query: { section: 'trace1' } }"
-            >Organisation autonome du travail</router-link
+            >Pilotage des tâches avec Trello</router-link
           >
-          (planification, jalons hebdomadaires), gestion d'un cahier des charges
-          évolutif et points réguliers avec le maître de stage.
+          : recueil du besoin, backlog, découpage en story points et
+          avancement par sprints.
+        </li>
+        <li>
+          <router-link
+            class="skill-link"
+            :to="{ name: 'suivi', query: { section: 'trace2' } }"
+            >Versioning Git et réunions de suivi</router-link
+          >
+          : historique de commits relié aux retours du maître de stage et aux
+          ajustements qui ont suivi.
+        </li>
+        <li>
+          <router-link
+            class="skill-link"
+            :to="{ name: 'integration', query: { section: 'trace1' } }"
+            >Prise en main de l'environnement</router-link
+          >
+          chez APPUP : préparation du projet en local, découverte de
+          l'organisation interne et autonomie progressive.
+        </li>
+        <li>
+          <router-link
+            class="skill-link"
+            :to="{ name: 'integration', query: { section: 'trace2' } }"
+            >Communication avec le maître de stage</router-link
+          >
+          : démonstrations concrètes, justification des choix techniques à
+          l'oral et signalement précoce des blocages.
         </li>
       </ul>
 

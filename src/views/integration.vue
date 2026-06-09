@@ -24,10 +24,17 @@
     </nav>
 
     <div v-if="activeSection !== 'bilan'" class="titleCard contentCard">
-      <div class="trace-layout">
+      <div
+        class="trace-layout"
+        :class="{ 'trace-layout--framed': currentSection.underlines?.length }">
         <figure class="trace-photo" aria-label="Emplacement pour une photo">
           <div class="trace-photo__image">
             <img :src="currentSection.image" :alt="currentSection.imageAlt" />
+            <span
+              v-for="(underline, index) in currentSection.underlines"
+              :key="index"
+              class="trace-underline"
+              :style="underlineStyle(underline)"></span>
           </div>
           <figcaption class="trace-photo__caption">
             {{ currentSection.caption }}
@@ -114,7 +121,7 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import trace1Image from "../assets/hero.png";
+import trace1Image from "../assets/trace6-demarrage-api.png";
 import trace2Image from "../assets/notes-stage.png";
 
 const sections = [
@@ -140,17 +147,19 @@ const sections = [
       },
     ],
     image: trace1Image,
-    imageAlt: "Vue de l'open space d'APPUP",
-    caption: "Trace 6 : poste de travail mis à disposition chez APPUP",
+    imageAlt:
+      "Terminal PowerShell exécutant « npm run dev » : nodemon démarre node Backend/Server.js et l'API se connecte à PostgreSQL (message « Connecté à PostgreSQL »)",
+    caption:
+      "Trace 6 : démarrage de l'API en local — nodemon lance le serveur et la connexion à PostgreSQL est établie",
     intro:
-      "La trace n°6 est une photo de mon poste de travail chez APPUP. Elle illustre la toute **première étape de mon intégration** : avant d'écrire la moindre ligne de code utile, il a fallu comprendre où j'arrivais, prendre connaissance du sujet et préparer le projet pour devenir **opérationnel rapidement**.",
+      "La trace n°6 est une capture du **démarrage de l'API en local** sur ma machine. Elle illustre la toute **première étape de mon intégration** : avant d'écrire la moindre ligne de code utile, il a fallu comprendre où j'arrivais, prendre connaissance du sujet et préparer le projet pour devenir **opérationnel rapidement**.",
     paragraphs: [
       "J'ai travaillé sur mon propre PC, déjà équipé des outils que j'utilise habituellement (**Node.js**, **PostgreSQL**, **VS Code**, **Git**, **Postman**) : je n'ai donc pas eu de poste à monter de zéro. Préparer le projet en local a surtout consisté à créer la base PostgreSQL, à renseigner le fichier **.env** avec les accès nécessaires et à vérifier que l'API démarrait correctement sur ma machine avant de commencer à développer.",
       "En parallèle, il a fallu découvrir l'organisation interne de l'entreprise. J'ai été accueilli par **Marouane FEKKAR**, le fondateur d'**APPUP**, qui m'a présenté l'activité de la société et le périmètre de mon sujet : développer une **API REST réutilisable** et un **site e-commerce** fictif qui s'appuie dessus. Comprendre qui fait quoi et comment circule l'information m'a permis de savoir à qui m'adresser selon le type de question.",
       "Enfin, partager l'open space avec **Alban CHOULET**, un autre étudiant de l'**IUT NFC**, m'a appris à demander le bon niveau d'information au bon moment : un avis rapide à un voisin de bureau pour une question secondaire, et les points avec Marouane réservés aux décisions structurantes. Cela m'a permis de **gagner en autonomie** sans rester bloqué ni solliciter le maître de stage pour tout.",
     ],
     footer:
-      "Cette trace montre comment j'ai posé, dès la première semaine, les bases techniques et humaines indispensables avant d'attaquer le développement.",
+      "",
   },
   {
     id: "trace2",
@@ -159,24 +168,31 @@ const sections = [
     skills: [
       {
         label: "présenter clairement les avancées",
-        color: "red",
+        color: "purple",
         keywords: ["présenter clairement les avancées"],
       },
       {
         label: "justifier les choix techniques à l'oral",
-        color: "green",
+        color: "teal",
         keywords: ["justifier les choix techniques à l'oral"],
       },
       {
         label: "intégrer les retours rapidement",
-        color: "orange",
+        color: "pink",
         keywords: ["intégrer les retours rapidement"],
       },
       {
         label: "savoir signaler un blocage tôt",
-        color: "blue",
+        color: "brown",
         keywords: ["savoir signaler un blocage tôt"],
       },
+    ],
+    // Soulignage tracé directement sur la capture (en % de l'image), pour
+    // pointer les lignes des notes qui correspondent aux corrections
+    // expliquées dans le texte (session/cookie vs localStorage, bearer → basic).
+    underlines: [
+      { x: "0.5%", y: "57.5%", w: "97.5%" },
+      { x: "0.5%", y: "84%", w: "86.5%" },
     ],
     image: trace2Image,
     imageAlt:
@@ -191,7 +207,7 @@ const sections = [
       "Quand je rencontrais un blocage — configuration des **webhooks Stripe**, gestion du **raw body Express** pour vérifier la signature, droits **S3** sur les images uploadées — j'ai appris à savoir signaler un blocage tôt plutôt qu'à m'enliser seul. Je rédigeais d'abord ma question **par écrit** : souvent cela suffisait à trouver la réponse moi-même, et quand ce n'était pas le cas, l'échange avec Marouane était beaucoup plus efficace.",
     ],
     footer:
-      "Cette trace illustre une communication courte, régulière et orientée résultat avec le maître de stage : on y voit comment un retour de réunion se transforme directement en corrections.",
+      "",
   },
   {
     id: "bilan",
@@ -200,7 +216,7 @@ const sections = [
     intro:
       "Le bilan d'intégration reprend les deux savoir-faire travaillés : la prise en main de l'environnement de travail chez APPUP et la communication avec le maître de stage. Au-delà des outils, le fil conducteur a été de devenir autonome rapidement tout en sachant solliciter les bonnes personnes au bon moment.",
     footer:
-      "Ce bilan donne une vision claire de la façon dont je me suis intégré dans l'équipe et de ma principale marge de progression : garder une trace écrite des décisions prises lors des points de suivi.",
+      "",
   },
 ];
 
@@ -314,6 +330,13 @@ const highlightSkills = (text, section) => {
   return result;
 };
 
+// Positionne un trait de soulignage (en %) par-dessus la capture.
+const underlineStyle = (underline) => ({
+  left: underline.x,
+  top: underline.y,
+  width: underline.w,
+});
+
 const currentSection = computed(() => {
   return (
     sections.find((section) => section.id === activeSection.value) ??
@@ -401,6 +424,22 @@ h2 {
   border-radius: 0.4rem;
 }
 
+/* Capture avec annotations : pas de padding pour que les traits de
+   soulignage s'alignent au pixel sur l'image. */
+.trace-layout--framed .trace-photo__image {
+  padding: 0;
+  overflow: visible;
+}
+
+/* Trait de soulignage tracé par-dessus la capture (positionné en %). */
+.trace-underline {
+  position: absolute;
+  height: 0;
+  border-bottom: 1.5px solid rgba(245, 159, 11, 0.7);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
 .trace-photo__caption {
   margin-top: 0.35rem;
   text-align: center;
@@ -445,6 +484,26 @@ h2 {
   background: rgba(40, 166, 237, 0.16);
 }
 
+.pill-purple {
+  color: #c4b5fd;
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.pill-teal {
+  color: #5eead4;
+  background: rgba(13, 148, 136, 0.16);
+}
+
+.pill-pink {
+  color: #f9a8d4;
+  background: rgba(219, 39, 119, 0.14);
+}
+
+.pill-brown {
+  color: #d6b08c;
+  background: rgba(146, 99, 55, 0.18);
+}
+
 :deep(strong) {
   color: var(--heading);
   font-weight: 700;
@@ -480,6 +539,26 @@ h2 {
 :deep(.hl-blue) {
   color: #7dd3fc;
   background: rgba(40, 166, 237, 0.16);
+}
+
+:deep(.hl-purple) {
+  color: #c4b5fd;
+  background: rgba(124, 58, 237, 0.15);
+}
+
+:deep(.hl-teal) {
+  color: #5eead4;
+  background: rgba(13, 148, 136, 0.16);
+}
+
+:deep(.hl-pink) {
+  color: #f9a8d4;
+  background: rgba(219, 39, 119, 0.14);
+}
+
+:deep(.hl-brown) {
+  color: #d6b08c;
+  background: rgba(146, 99, 55, 0.18);
 }
 
 .textCard {
